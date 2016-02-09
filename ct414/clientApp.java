@@ -6,6 +6,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 import java.util.List;
+import java.util.ArrayList;
 
 public class clientApp{
 	public static void main(String args[]){
@@ -50,19 +51,19 @@ public class clientApp{
     
     private static Assessment runTest(Assessment exam){
     	List<Question> Qs = exam.getQuestions(); 
-		List<Integer> openQs;
+		List<Integer> openQs = new ArrayList<Integer>(Qs.size());
     	Scanner scanner = new Scanner(System.in);
     	int choice = -2, ans, ind;
     	System.out.println("Information on this Assessment:");
     	System.out.print(exam.getInformation());
     	for (int i = 1; i <= Qs.size(); i++){
-    		openQs.add(i);
+    		openQs.add(i-1,i);
     	}
     	while (true){
     		for (int i = 0; i < openQs.size(); i++){
     			//May need to print questions and answers
 				//Need to access Lists below using iterators
-    			System.out.format("Question %d %s \n", openQs[i], Qs[openQs[i]]);
+    			System.out.format("Question %d %s \n", openQs.get(i), Qs.get(openQs.get(i)));
     		}
     		System.out.println("Specify Question number that you want to answer or 0 to exit:");
     		choice = Integer.parseInt(scanner.next());
@@ -73,28 +74,34 @@ public class clientApp{
             if (choice == 0){
             	break;
             }
-            Question curQuestion = exam.getQuestion(choice-1);
-            System.out.println(curQuestion.getQuestionDetail());
-            String[] posAnswers = curQuestion.getAnswerOptions();
-            for (int j = 1; j < posAnswers.length; j++){
-            	System.out.format("%d %s \n", j, posAnswers[j-1]);
-            }
-            System.out.println("Please give answer number or 0 to leave blank:");
-            ans = Integer.parseInt(scanner.next());
-            while (ans < 0 && ans >= posAnswers.length){
-            	System.out.println("Please give a valid answer number or 0 to leave blank:");
-            	ans = Integer.parseInt(scanner.next());
-            }
-            if (ans == 0){
-            	continue;
-            }
-            else{
-            	exam.selectAnswer(choice-1, ans-1);
-            	ind = openQs.indexOf(choice);
-				if (ind != -1){
-					openQs.remove(ind);
+			try{
+				Question curQuestion = exam.getQuestion(choice-1);
+				System.out.println(curQuestion.getQuestionDetail());
+				String[] posAnswers = curQuestion.getAnswerOptions();
+				for (int j = 1; j < posAnswers.length; j++){
+					System.out.format("%d %s \n", j, posAnswers[j-1]);
 				}
-            }
+				System.out.println("Please give answer number or 0 to leave blank:");
+				ans = Integer.parseInt(scanner.next());
+				while (ans < 0 && ans >= posAnswers.length){
+					System.out.println("Please give a valid answer number or 0 to leave blank:");
+					ans = Integer.parseInt(scanner.next());
+				}
+				if (ans == 0){
+					continue;
+				}
+				else{
+					exam.selectAnswer(choice-1, ans-1);
+					ind = openQs.indexOf(choice);
+					if (ind != -1){
+						openQs.remove(ind);
+					}
+				}
+			}
+			catch (Exception e) {
+            System.err.println("ClientApp exception:");
+            e.printStackTrace();
+			}
         }
         return(exam);
     }

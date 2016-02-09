@@ -1,20 +1,31 @@
-//AssessmentImp.java
+//Test.java
 
-package ct414
+package ct414;
 
-public class AssessmentImp implements Assessment{
-	public Assessment(String information, Date closingDate, List<Question> questions, int stuID){
-		int student = stuID, lastQuestion;
-		String information = information;
-		Date closingDate = closingDate;
-		List<Question> questions = questions;
-		ArrayList<int> answers = answersInit(questions.size());
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+
+public class Test implements Assessment{
+	private int student; 
+	private Integer lastQuestion;
+	private String info;
+	private Date closeDate;
+	private List<Question> questions;
+	private ArrayList<Integer> answers;
+	
+	public Test(String information, Date closingDate, List<Question> questionsIn, int stuID){
 		super();
+		student = stuID;
+		info = information;
+		closeDate = closingDate;
+		questions = questionsIn;
+		answers = answersInit(questions.size());
 	}
 	
-	private ArrayList<int> answersInit(int size){
+	private ArrayList<Integer> answersInit(int size){
 		int i;
-		ArrayList<int> answers = new ArrayList<int>(size);
+		ArrayList<Integer> answers = new ArrayList<Integer>(size);
 		for (i = 0; i < size; i++){
 			answers.add(i,-1);
 		}
@@ -22,11 +33,11 @@ public class AssessmentImp implements Assessment{
 	}
 	
 	public String getInformation(){
-		return(information);
+		return(info);
 	}
 	
 	public Date getClosingDate(){
-		return(closingDate);
+		return(closeDate);
 	}
 	
 	public List<Question> getQuestions(){
