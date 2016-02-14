@@ -7,17 +7,18 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ExamEngine implements ExamServer {
 	
 	private ArrayList<String> cCodes;
 	
-	private String[4] mathsQs;
-	private String[4][4] mathsAs;
-	private String[4] computersQs;
-	private String[4][4] computersAs;
+	private String[] mathsQs;
+	private String[][] mathsAs;
+	private String[] computersQs;
+	private String[][] computersAs;
 	
-	private ArrayList<int> users;
+	private ArrayList<Integer> users;
 	private ArrayList<String> passwords;
 	
     // Constructor is required
@@ -26,10 +27,10 @@ public class ExamEngine implements ExamServer {
         cCodes = new ArrayList<String>(Arrays.asList("ma101", "cs101"));
         mathsQs = new String[] {"1+1=", "5+4=", "9-7=", "13-7="};
         mathsAs = new String[][] {{"1","2","3","4"},{"5","7","9","11"},{"0","2","4","3"},{"7","6","9","5"}};
-        computersQs = new String[] {"Which of the following is a type of loop?", "Which of the following is a common conditional clause keyword?", "What does [] commonly signify?", "What letter precided by a \ sigifies the end of line in a file?"};
+        computersQs = new String[] {"Which of the following is a type of loop?", "Which of the following is a common conditional clause keyword?", "What does [] commonly signify?", "What letter precided by a \\ sigifies the end of line in a file?"};
         computersAs = new String[][] {{"when","file","else","while"},{"if","for","open","move"},{"a file","an array","an int","a dictionary"},{"t","s","n","b"}};
         
-        users = new ArrayList<int>(Arrays.asList(123,456,789));
+        users = new ArrayList<Integer>(Arrays.asList(123,456,789));
         passwords = new ArrayList<String>(Arrays.asList("pass", "word", "hi"));
     }
 
