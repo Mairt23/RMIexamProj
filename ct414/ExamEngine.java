@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class ExamEngine implements ExamServer {
 	
-	private ArrayList<String> cCodes;
+	private List<String> cCodes;
 	
 	private String[] mathsQs;
 	private String[][] mathsAs;
@@ -46,6 +46,8 @@ public class ExamEngine implements ExamServer {
 		dates.add(tempdate);
 		dates.add(tempdate);
 		
+		tokens = new ArrayList<Integer>();
+		
 		int j;
 		for(j = 0; j < users.size(); j++){
 			saveans.put(users.get(j), new ArrayList<Assessment>(Arrays.asList()));
@@ -56,10 +58,15 @@ public class ExamEngine implements ExamServer {
     // Return an access token that allows access to the server for some time period
     public int login(int studentid, String password) throws 
                 UnauthorizedAccess, RemoteException {
+				Random rand = new Random();
 				
+				
+				
+				//System.out.println("nothing");
 				if(users.contains(studentid)){
 					if(passwords.contains(password)){
-						int token = Random.nextInt();
+						
+						int token = rand.nextInt();
 						tokens.add(token); //!!!!Need to set seed!!!!!!!
 						return(token);
 						}
@@ -69,7 +76,7 @@ public class ExamEngine implements ExamServer {
 				}
 				else{
 					throw new UnauthorizedAccess("Student I.D not recognised");
-					}
+				}
     }
 
     // Return a summary list of Assessments currently available for this studentid
@@ -78,13 +85,11 @@ public class ExamEngine implements ExamServer {
 				
 				if(!users.contains(studentid)){
 					throw new UnauthorizedAccess("student i.d not recognized");
-					}
+				}
 				if(!tokens.contains(token)){
 					throw new UnauthorizedAccess("login failed, please ensure you have logged in.  ");
-					}
+				}
 				return (cCodes);
-
-        return null;
     }
 
     // Return an Assessment object associated with a particular course code
@@ -93,9 +98,10 @@ public class ExamEngine implements ExamServer {
 				
 				int i;
 				int j;
-				ArrayList <String> studcodes;
+				List<String> studcodes = new ArrayList<String>();
 				ArrayList <Assessment> studrec = saveans.get(studentid);
 				for(j = 0; j < studrec.size(); j++){
+					//Need to check that student ids match
 					studcodes.add(studrec.get(0).getInformation());
 				}
 				if(cCodes.indexOf(courseCode)==0){
@@ -133,6 +139,7 @@ public class ExamEngine implements ExamServer {
     public void submitAssessment(int token, int studentid, Assessment completed) throws 
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
+				//Need to check that student ids match
 				if(!users.contains(studentid)){
 					throw new UnauthorizedAccess("student i.d not recognized");
 				}
@@ -151,8 +158,7 @@ public class ExamEngine implements ExamServer {
         try {
             String name = "ExamServer";
             ExamServer engine = new ExamEngine();
-            ExamServer stub =
-                (ExamServer) UnicastRemoteObject.exportObject(engine, 0);
+            ExamServer stub = (ExamServer) UnicastRemoteObject.exportObject(engine, 0);
             Registry registry = LocateRegistry.getRegistry();
             registry.rebind(name, stub);
             System.out.println("ExamEngine bound");

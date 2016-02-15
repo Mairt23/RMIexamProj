@@ -55,18 +55,8 @@ public class Test implements Assessment{
 		lastQuestion = questionNumber;
 	}
 	
-	public int getSelectedAnswer(){
-		if (lastQuestion == null){
-			System.out.println("No questions answered yet");
-			return(0);
-		}
-		else if (answers.get(lastQuestion) == -1){
-			System.out.println("No answer selected yet");
-			return(0);
-		}
-		else{
-			return(answers.get(lastQuestion));
-		}
+	public int getSelectedAnswer(int questionNumber){
+		return(answers.get(questionNumber));
 	}
 	
 	public int getAssociatedID(){

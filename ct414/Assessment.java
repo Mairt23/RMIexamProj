@@ -26,7 +26,7 @@ public interface Assessment extends Serializable {
 		InvalidQuestionNumber, InvalidOptionNumber;
 
 	// Return selected answer or zero if none selected yet
-	public int getSelectedAnswer();
+	public int getSelectedAnswer(int questionNumber);
 
 	// Return studentid associated with this assessment object
 	// This will be preset on the server before object is downloaded

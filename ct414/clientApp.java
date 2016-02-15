@@ -19,6 +19,7 @@ public class clientApp{
             ExamServer examServ = (ExamServer) registry.lookup(name);
             Scanner scanner = new Scanner(System.in);
             String password = args[2], choice = "";
+			System.out.println(password);
             int stuID = Integer.parseInt(args[1]), token = examServ.login(stuID, password);
             System.out.print("Welcome student ");
             System.out.print(stuID);
@@ -26,15 +27,21 @@ public class clientApp{
             System.out.println("Note: At any stage type the word 'exit' and press the return key to log off");
             while (true){
             	System.out.println("Open assessments:");
-            	//May need to manually print this list. On compile: yep!!
-            	System.out.print(examServ.getAvailableSummary(token, stuID));
+            	//May need to manually print this list.
+				List<String> summary = examServ.getAvailableSummary(token, stuID);
+				for (int i = 0; i < summary.size(); i++){
+					System.out.print(summary.get(i)+" ");
+				}
+            	//System.out.print(examServ.getAvailableSummary(token, stuID));
+				System.out.print("\n");
             	System.out.println("Which assessment would you like to complete?(give course code)");
             	//May need a stronger check than this one
-            	while (choice == ""){
+				choice = scanner.next();
+            	while (choice.equals("")){
+					System.out.format("%s is not a valid input. Please type assessment course code or type 'exit' and hit return.\n", choice);
             		choice = scanner.next();
-            		System.out.format("%s is not a valid input. Please type assessment course code or type 'exit' and hit return.\n", choice);
             	}
-            	if (choice == "exit"){
+            	if (choice.equals("exit")){
             		break;
             	}
             	//May need to check that a user is still logged on at each of the 2 below stages
@@ -54,22 +61,30 @@ public class clientApp{
 		List<Integer> openQs = new ArrayList<Integer>(Qs.size());
     	Scanner scanner = new Scanner(System.in);
     	int choice = -2, ans, ind;
-    	System.out.println("Information on this Assessment:");
-    	System.out.print(exam.getInformation());
+    	System.out.println("Module code for this Assessment:");
+    	System.out.println(exam.getInformation());
     	for (int i = 1; i <= Qs.size(); i++){
     		openQs.add(i-1,i);
     	}
     	while (true){
+			Question tempQ;
+			String[] tempQans;
     		for (int i = 0; i < openQs.size(); i++){
-    			//May need to print questions and answers
-				//Need to access Lists below using iterators
-    			System.out.format("Question %d %s \n", openQs.get(i), Qs.get(openQs.get(i)));
+				System.out.format("Question %d\n", openQs.get(i));
+				tempQ = Qs.get(openQs.get(i)-1);
+				tempQans = tempQ.getAnswerOptions();
+				System.out.println(tempQ.getQuestionDetail());
+				for (int j = 0; j < tempQans.length; j++){
+					System.out.format("Option %d: ", j+1);
+					System.out.print(tempQans[j]+" ");
+				}
+				System.out.print("\n");
     		}
     		System.out.println("Specify Question number that you want to answer or 0 to exit:");
     		choice = Integer.parseInt(scanner.next());
-    		while (choice < 0 && choice >= Qs.size()){
+    		while (choice < 0 || choice > Qs.size()){
+					System.out.format("%d is not a valid input. Please give question number or 0 to exit:\n", choice);
             		choice = Integer.parseInt(scanner.next());
-            		System.out.format("%d is not a valid input. Please give question number or 0 to exit:\n", choice);
             }
             if (choice == 0){
             	break;
@@ -78,12 +93,12 @@ public class clientApp{
 				Question curQuestion = exam.getQuestion(choice-1);
 				System.out.println(curQuestion.getQuestionDetail());
 				String[] posAnswers = curQuestion.getAnswerOptions();
-				for (int j = 1; j < posAnswers.length; j++){
-					System.out.format("%d %s \n", j, posAnswers[j-1]);
+				for (int j = 1; j <= posAnswers.length; j++){
+					System.out.format("%d: %s \n", j, posAnswers[j-1]);
 				}
-				System.out.println("Please give answer number or 0 to leave blank:");
+				System.out.println("Please give option number or 0 to leave blank:");
 				ans = Integer.parseInt(scanner.next());
-				while (ans < 0 && ans >= posAnswers.length){
+				while (ans < 0 || ans > posAnswers.length){
 					System.out.println("Please give a valid answer number or 0 to leave blank:");
 					ans = Integer.parseInt(scanner.next());
 				}
