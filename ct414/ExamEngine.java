@@ -67,15 +67,15 @@ public class ExamEngine implements ExamServer {
     public int login(int studentid, String password) throws 
                 UnauthorizedAccess, RemoteException {
 				Random rand = new Random();
-				
-				
+				long date = new Date().getTime();
+				rand.setSeed(date);
 				
 //these nested if statements confirm that if a users i.d is valid, and also the password is present, then a token is returned.  
 				if(users.contains(studentid)){
 					if(passwords.contains(password)){
 						
 						int token = rand.nextInt();
-						tokens.add(token); //!!!!Need to set seed!!!!!!!
+						tokens.add(token);
 						return(token);
 						}
 //else, detailed explanations are given depending on which hurdle they fell at.  
@@ -156,7 +156,7 @@ public class ExamEngine implements ExamServer {
     public void submitAssessment(int token, int studentid, Assessment completed) throws 
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
-//Need to check that student ids match
+//Need to check that student ids match!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				if(!users.contains(studentid)){
 					throw new UnauthorizedAccess("student i.d not recognized");
 				}

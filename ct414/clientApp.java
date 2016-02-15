@@ -46,7 +46,6 @@ public class clientApp{
 				}
             	System.out.print("\n");
             	System.out.println("Which assessment would you like to complete?(give course code)");
-            	//May need a stronger check than this one!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				choice = scanner.next();
 				//Make sure that the student gives a valid input
             	while (choice.equals("") || !summary.contains(choice)){
@@ -56,7 +55,6 @@ public class clientApp{
             	if (choice.equals("exit")){
             		break;
             	}
-            	//May need to check that a user is still logged on at each of the 2 below stages!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!7
 				//Get an assessment off the exam server
             	Assessment test = examServ.getAssessment(token, stuID, choice);
 				//Let the student take the test
@@ -145,6 +143,7 @@ public class clientApp{
 					if (ind != -1){
 						openQs.remove(ind);
 					}
+					//Add functionality to see previous answers
 				}
 			}
 			catch (Exception e) {
