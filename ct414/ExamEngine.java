@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 import java.util.Map;
+import java.util.Date;
+import java.util.HashMap;
 
 public class ExamEngine implements ExamServer {
 	
@@ -26,7 +28,7 @@ public class ExamEngine implements ExamServer {
 	private ArrayList<Date> dates;
 	
 	//private ArrayList<ArrayList<Assessment>> oldAss;
-	private map<Integer, ArrayList<Assessment>> saveans = new HashMap<Integer, ArrayList<Assessment>>();
+	private Map<Integer, ArrayList<Assessment>> saveans = new HashMap<Integer, ArrayList<Assessment>>();
 	
     // Constructor is required
     public ExamEngine() {
@@ -39,15 +41,14 @@ public class ExamEngine implements ExamServer {
         
         users = new ArrayList<Integer>(Arrays.asList(123,456,789));
         passwords = new ArrayList<String>(Arrays.asList("pass", "word", "hi"));
-		dates = new ArrayList<Date>;
+		dates = new ArrayList<Date>(Arrays.asList());
 		Date tempdate = new Date(2016, 2, 6);
 		dates.add(tempdate);
-		Date tempdate = new Date(2016, 2, 6);
 		dates.add(tempdate);
 		
 		int j;
 		for(j = 0; j < users.size(); j++){
-			saveans.put(users[j], new ArrayList<Assessment>);
+			saveans.put(users.get(j), new ArrayList<Assessment>(Arrays.asList()));
 		}
     }
 
@@ -57,17 +58,17 @@ public class ExamEngine implements ExamServer {
                 UnauthorizedAccess, RemoteException {
 				
 				if(users.contains(studentid)){
-					if(passwords.contains(password){
+					if(passwords.contains(password)){
 						int token = Random.nextInt();
 						tokens.add(token); //!!!!Need to set seed!!!!!!!
 						return(token);
 						}
 					else{
-						throw new UnauthorizedAccess("Password not recognised")
+						throw new UnauthorizedAccess("Password not recognised");
 					}
 				}
 				else{
-					throw new UnauthorizedAccess("Student I.D not recognised")
+					throw new UnauthorizedAccess("Student I.D not recognised");
 					}
     }
 
@@ -75,10 +76,10 @@ public class ExamEngine implements ExamServer {
     public List<String> getAvailableSummary(int token, int studentid) throws
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
-				if(!users.contains(studentid){
+				if(!users.contains(studentid)){
 					throw new UnauthorizedAccess("student i.d not recognized");
 					}
-				if(!tokens.contains(token){
+				if(!tokens.contains(token)){
 					throw new UnauthorizedAccess("login failed, please ensure you have logged in.  ");
 					}
 				return (cCodes);
@@ -91,56 +92,56 @@ public class ExamEngine implements ExamServer {
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
 				int i;
+				int j;
 				ArrayList <String> studcodes;
-				ArrayList <Assessmemnt> studrec = saveans.get(studentid);
-				for(j = 0; j < studrec; j++){
-					studcodes.add(studrec[0].getInformation());
+				ArrayList <Assessment> studrec = saveans.get(studentid);
+				for(j = 0; j < studrec.size(); j++){
+					studcodes.add(studrec.get(0).getInformation());
 				}
-				if(cCodes.IndexOf(courseCode)==0){
-					if(studcodes.contains(cCodes[0]){
-						return(studrec[studcodes.IndexOf(cCodes[0])]);
+				if(cCodes.indexOf(courseCode)==0){
+					if(studcodes.contains(cCodes.get(0))){
+						return(studrec.get(studcodes.indexOf(cCodes.get(0))));
 						}
 					else{
-						questions = new ArrayList<Question>;
-						for(i = 0; i < mathsQs.size(); i++){
-							questions.add(new Question(mathsQs[i], mathsAs[i], i);
+						List<Question> questions = new ArrayList<Question>(Arrays.asList());
+						for(i = 0; i < mathsQs.length; i++){
+							questions.add(new q(mathsQs[i], mathsAs[i], i));
 							}
-						Assessment temp = new Assessment(cCodes[0], dates[0], questions, studentid);
+						Test temp = new Test(cCodes.get(0), dates.get(0), questions, studentid);
 						return(temp);
 					}
 				}
-				else if(cCodes.IndexOf(courseCode)==1){
-					if(studcodes.contains(cCodes[1]){
-						return(studrec[studcodes.IndexOf(cCodes[1])]);
+				else if(cCodes.indexOf(courseCode)==1){
+					if(studcodes.contains(cCodes.get(1))){
+						return(studrec.get(studcodes.indexOf(cCodes.get(1))));
 						}
 					else{
-						questions = new ArrayList<Question>;
-						for(i = 0; i < computersQs.size(); i++){
-							questions.add(new Question(computersQs[i], computersAs[i], i);
+						List<Question> questions = new ArrayList<Question>(Arrays.asList());
+						for(i = 0; i < computersQs.length; i++){
+							questions.add(new q(computersQs[i], computersAs[i], i));
 							}
-						Assessment temp = new Assessment(cCodes[1], dates[1], questions, studentid);
+						Test temp = new Test(cCodes.get(1), dates.get(1), questions, studentid);
 						return(temp);
 					}
 				}
 				else{
 					throw new NoMatchingAssessment("No assessment for course code");
-
-        return null;
+					}
     }
 
     // Submit a completed assessment
     public void submitAssessment(int token, int studentid, Assessment completed) throws 
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
-				if(!users.contains(studentid){
+				if(!users.contains(studentid)){
 					throw new UnauthorizedAccess("student i.d not recognized");
 				}
-				if(!tokens.contains(token){
+				if(!tokens.contains(token)){
 					throw new UnauthorizedAccess("login failed, please ensure you have logged in.  ");
 				}
-				ArrayList<Assessment> stuRec = saveAns.get(studentid);
-				stuRec.add(completed)
-				saveAns.put(studentid, stuRec);
+				ArrayList<Assessment> sturec = saveans.get(studentid);
+				sturec.add(completed);
+				saveans.put(studentid, sturec);
     }
 
     public static void main(String[] args) {
