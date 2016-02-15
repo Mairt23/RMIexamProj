@@ -8,45 +8,60 @@ import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 
+//ClientApp makes a connection to an exam server and allows a studen to take any tests avaiable to them
+//Input: 	args[0] = The address of the registry where the exam server is held
+//			args[1] = The id of a student
+//			args[2] = The password of above student
 public class clientApp{
 	public static void main(String args[]){
+		//Get securiity manager if non is already set
 		if (System.getSecurityManager() == null) {
             System.setSecurityManager(new SecurityManager());
         }
         try {
+			//Server name that the client app will lookup
             String name = "ExamServer";
+			//Find the registry where the ExamServer can be looked up
             Registry registry = LocateRegistry.getRegistry(args[0]);
+			//Look up the exam server on the name server and get a stub of the exam server class
             ExamServer examServ = (ExamServer) registry.lookup(name);
+			//scanner will read inputs off the command line
             Scanner scanner = new Scanner(System.in);
+			//Read in the student id and password from the command line arguments
+			int stuID = Integer.parseInt(args[1]);
             String password = args[2], choice = "";
-			System.out.println(password);
-            int stuID = Integer.parseInt(args[1]), token = examServ.login(stuID, password);
+			//Log the student into the server
+            int token = examServ.login(stuID, password);
             System.out.print("Welcome student ");
             System.out.print(stuID);
             System.out.print("\n");
-            System.out.println("Note: At any stage type the word 'exit' and press the return key to log off");
+            System.out.println("Note: At any stage (before or after you take a test) type the word 'exit' and press the return key to log off");
+			//Keep asking the user which assessment they want to attempt until they type 'exit'
             while (true){
+				//Give the student a list of all tests available to them
             	System.out.println("Open assessments:");
-            	//May need to manually print this list.
 				List<String> summary = examServ.getAvailableSummary(token, stuID);
 				for (int i = 0; i < summary.size(); i++){
 					System.out.print(summary.get(i)+" ");
 				}
-            	//System.out.print(examServ.getAvailableSummary(token, stuID));
-				System.out.print("\n");
+            	System.out.print("\n");
             	System.out.println("Which assessment would you like to complete?(give course code)");
-            	//May need a stronger check than this one
+            	//May need a stronger check than this one!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				choice = scanner.next();
-            	while (choice.equals("")){
+				//Make sure that the student gives a valid input
+            	while (choice.equals("") || !summary.contains(choice)){
 					System.out.format("%s is not a valid input. Please type assessment course code or type 'exit' and hit return.\n", choice);
             		choice = scanner.next();
             	}
             	if (choice.equals("exit")){
             		break;
             	}
-            	//May need to check that a user is still logged on at each of the 2 below stages
+            	//May need to check that a user is still logged on at each of the 2 below stages!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!7
+				//Get an assessment off the exam server
             	Assessment test = examServ.getAssessment(token, stuID, choice);
+				//Let the student take the test
 				test = runTest(test);
+				//Submit the Assessment back to the exam server
             	examServ.submitAssessment(token, stuID, test);
             }
         }
@@ -56,32 +71,44 @@ public class clientApp{
         }
     }
     
+	//runTest takes an assessment object and allows the user to answer the questions in that Assessment
+	//Input: exam = The assessment that the user has specified that they want to do
     private static Assessment runTest(Assessment exam){
-    	List<Question> Qs = exam.getQuestions(); 
+		//Hold all of the questions in exam
+    	List<Question> Qs = exam.getQuestions();
+		//Hold all of the question numbers that have not been answered yet
 		List<Integer> openQs = new ArrayList<Integer>(Qs.size());
+		//scanner will read in inputs from the command line
     	Scanner scanner = new Scanner(System.in);
     	int choice = -2, ans, ind;
+		//Give the student some info on this assessment
     	System.out.println("Module code for this Assessment:");
     	System.out.println(exam.getInformation());
+		//Populate the openQs list
     	for (int i = 1; i <= Qs.size(); i++){
     		openQs.add(i-1,i);
     	}
     	while (true){
+			//Hold the questions and answers for display to the student
 			Question tempQ;
 			String[] tempQans;
+			//Display all Questions an answers in a nice format
     		for (int i = 0; i < openQs.size(); i++){
-				System.out.format("Question %d\n", openQs.get(i));
+				System.out.format("Question %d: ", openQs.get(i));
 				tempQ = Qs.get(openQs.get(i)-1);
-				tempQans = tempQ.getAnswerOptions();
 				System.out.println(tempQ.getQuestionDetail());
+				System.out.print("\n");
+				tempQans = tempQ.getAnswerOptions();
 				for (int j = 0; j < tempQans.length; j++){
 					System.out.format("Option %d: ", j+1);
 					System.out.print(tempQans[j]+" ");
 				}
 				System.out.print("\n");
     		}
+			//Get the question number that the student wishes to attempt
     		System.out.println("Specify Question number that you want to answer or 0 to exit:");
     		choice = Integer.parseInt(scanner.next());
+			//Make sure the choice is valid
     		while (choice < 0 || choice > Qs.size()){
 					System.out.format("%d is not a valid input. Please give question number or 0 to exit:\n", choice);
             		choice = Integer.parseInt(scanner.next());
@@ -89,24 +116,31 @@ public class clientApp{
             if (choice == 0){
             	break;
             }
+			//This block is where the student answers their chosen question
 			try{
+				//Get and show the questions and answers
 				Question curQuestion = exam.getQuestion(choice-1);
 				System.out.println(curQuestion.getQuestionDetail());
 				String[] posAnswers = curQuestion.getAnswerOptions();
 				for (int j = 1; j <= posAnswers.length; j++){
 					System.out.format("%d: %s \n", j, posAnswers[j-1]);
 				}
+				//Ask the student for their answer
 				System.out.println("Please give option number or 0 to leave blank:");
 				ans = Integer.parseInt(scanner.next());
+				//Make sure the choice is valid
 				while (ans < 0 || ans > posAnswers.length){
 					System.out.println("Please give a valid answer number or 0 to leave blank:");
 					ans = Integer.parseInt(scanner.next());
 				}
+				//Let the user leave the answer blank should they wish
 				if (ans == 0){
 					continue;
 				}
+				//Otherwise, save the answer they give
 				else{
 					exam.selectAnswer(choice-1, ans-1);
+					//Update the list of hitherto unanswered questions
 					ind = openQs.indexOf(choice);
 					if (ind != -1){
 						openQs.remove(ind);
