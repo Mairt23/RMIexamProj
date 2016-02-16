@@ -48,7 +48,7 @@ public class clientApp{
             	System.out.println("Which assessment would you like to complete?(give course code)");
 				choice = scanner.next();
 				//Make sure that the student gives a valid input
-            	while (choice.equals("") || !summary.contains(choice)){
+            	while ((choice.equals("") || !summary.contains(choice)) && !choice.equals("exit")){
 					System.out.format("%s is not a valid input. Please type assessment course code or type 'exit' and hit return.\n", choice);
             		choice = scanner.next();
             	}
@@ -99,56 +99,77 @@ public class clientApp{
 				tempQans = tempQ.getAnswerOptions();
 				for (int j = 0; j < tempQans.length; j++){
 					System.out.format("Option %d: ", j+1);
-					System.out.print(tempQans[j]+" ");
+					System.out.println(tempQans[j]+" ");
 				}
 				System.out.print("\n");
     		}
 			//Get the question number that the student wishes to attempt
-    		System.out.println("Specify Question number that you want to answer or 0 to exit:");
+    		System.out.println("Specify Question number that you want to answer or 0 to exit or -1 to see your previous answers:");
     		choice = Integer.parseInt(scanner.next());
 			//Make sure the choice is valid
-    		while (choice < 0 || choice > Qs.size()){
+    		while (choice < -1 || choice > Qs.size()){
 					System.out.format("%d is not a valid input. Please give question number or 0 to exit:\n", choice);
             		choice = Integer.parseInt(scanner.next());
             }
+			System.out.print("\n");
             if (choice == 0){
             	break;
             }
-			//This block is where the student answers their chosen question
-			try{
-				//Get and show the questions and answers
-				Question curQuestion = exam.getQuestion(choice-1);
-				System.out.println(curQuestion.getQuestionDetail());
-				String[] posAnswers = curQuestion.getAnswerOptions();
-				for (int j = 1; j <= posAnswers.length; j++){
-					System.out.format("%d: %s \n", j, posAnswers[j-1]);
-				}
-				//Ask the student for their answer
-				System.out.println("Please give option number or 0 to leave blank:");
-				ans = Integer.parseInt(scanner.next());
-				//Make sure the choice is valid
-				while (ans < 0 || ans > posAnswers.length){
-					System.out.println("Please give a valid answer number or 0 to leave blank:");
-					ans = Integer.parseInt(scanner.next());
-				}
-				//Let the user leave the answer blank should they wish
-				if (ans == 0){
-					continue;
-				}
-				//Otherwise, save the answer they give
-				else{
-					exam.selectAnswer(choice-1, ans-1);
-					//Update the list of hitherto unanswered questions
-					ind = openQs.indexOf(choice);
-					if (ind != -1){
-						openQs.remove(ind);
+			else if (choice == -1){
+				int ansNum;
+				System.out.println("Questions and Answers so far");
+				for(int k = 0; k < Qs.size(); k++){
+					if (!openQs.contains(k+1)){
+						System.out.println(Qs.get(k).getQuestionDetail());
+						ansNum = exam.getSelectedAnswer(k);
+						System.out.format("You chose option: %d which was ", ansNum + 1);
+						System.out.println(Qs.get(k).getAnswerOptions()[ansNum]);
 					}
-					//Add functionality to see previous answers
 				}
+				System.out.print("\n");
 			}
-			catch (Exception e) {
-            System.err.println("ClientApp exception:");
-            e.printStackTrace();
+			else{
+			//This block is where the student answers their chosen question
+				try{
+					//Get and show the questions and answers
+					Question curQuestion = exam.getQuestion(choice-1);
+					System.out.println(curQuestion.getQuestionDetail());
+					String[] posAnswers = curQuestion.getAnswerOptions();
+					System.out.print("\n");
+					for (int j = 1; j <= posAnswers.length; j++){
+						System.out.format("Option %d: %s \n", j, posAnswers[j-1]);
+					}
+					System.out.print("\n");
+					//Ask the student for their answer
+					System.out.println("Please give option number or 0 to leave blank:");
+					ans = Integer.parseInt(scanner.next());
+					//Make sure the choice is valid
+					while (ans < 0 || ans > posAnswers.length){
+						System.out.println("Please give a valid answer number or 0 to leave blank:");
+						ans = Integer.parseInt(scanner.next());
+					}
+					System.out.print("\n");
+					//Let the user leave the answer blank should they wish
+					if (ans == 0){
+						continue;
+					}
+					//Otherwise, save the answer they give
+					//Add functionality to see previous answers
+					
+					else{
+						exam.selectAnswer(choice-1, ans-1);
+						//Update the list of hitherto unanswered questions
+						ind = openQs.indexOf(choice);
+						if (ind != -1){
+							openQs.remove(ind);
+						}
+						
+					}
+				}
+				catch (Exception e) {
+				System.err.println("ClientApp exception:");
+				e.printStackTrace();
+				}
 			}
         }
         return(exam);
