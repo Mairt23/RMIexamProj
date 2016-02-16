@@ -112,7 +112,6 @@ public class ExamEngine implements ExamServer {
 				ArrayList <Assessment> studrec = saveans.get(studentid);
 //this for loop runs through each entry in the 
 				for(j = 0; j < studrec.size(); j++){
-//Need to check that student ids match
 					studcodes.add(studrec.get(0).getInformation());
 				}
 //these nested if statements ensure that it is the correct assessment being accessed, in this case it is the maths assessment.  
@@ -156,7 +155,9 @@ public class ExamEngine implements ExamServer {
     public void submitAssessment(int token, int studentid, Assessment completed) throws 
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
-//Need to check that student ids match!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				if(studentid != completed.getAssociatedID){
+					throw new UnauthorizedAccess("Student i.d does not match Assignment id");
+				}
 				if(!users.contains(studentid)){
 					throw new UnauthorizedAccess("student i.d not recognized");
 				}
