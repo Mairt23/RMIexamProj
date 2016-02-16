@@ -155,7 +155,7 @@ public class ExamEngine implements ExamServer {
     public void submitAssessment(int token, int studentid, Assessment completed) throws 
                 UnauthorizedAccess, NoMatchingAssessment, RemoteException {
 				
-				if(studentid != completed.getAssociatedID){
+				if(studentid != completed.getAssociatedID()){
 					throw new UnauthorizedAccess("Student i.d does not match Assignment id");
 				}
 				if(!users.contains(studentid)){

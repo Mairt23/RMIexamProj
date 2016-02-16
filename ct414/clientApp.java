@@ -115,6 +115,7 @@ public class clientApp{
             if (choice == 0){
             	break;
             }
+			//Print the questions and answers that the user has already done
 			else if (choice == -1){
 				int ansNum;
 				System.out.println("Questions and Answers so far");
@@ -154,8 +155,6 @@ public class clientApp{
 						continue;
 					}
 					//Otherwise, save the answer they give
-					//Add functionality to see previous answers
-					
 					else{
 						exam.selectAnswer(choice-1, ans-1);
 						//Update the list of hitherto unanswered questions
